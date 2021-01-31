@@ -104,7 +104,11 @@
 <li>Create a service account that has access to Chat API</li>
 <li>Send the <code>privateKey</code> and <code>issuerEmail</code> to the <code>ChatService.init</code> method</li>
 </ul>
-<p>Please <a href="https://classroomtechtools.github.io/chat-adv-service/">see documentation</a>.</p>
+<pre class="prettyprint source lang-js"><code>const Chat = ChatService.init('&lt;privateKey>', '&lt;issuerEmail>');
+const rooms = Chat.Spaces.list();
+Logger.log(rooms);
+</code></pre>
+<p>Please <a href="https://classroomtechtools.github.io/chat-adv-service/">see documentation</a>. The <code>init</code> method creates a <code>Chatv1</code> object, which lets you interact with the API.</p>
     </article>
   </section>
 
