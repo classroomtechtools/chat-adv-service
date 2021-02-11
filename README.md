@@ -24,7 +24,7 @@ AppsScript doesn't have a native advanced service to interact with the Chat API.
 ## Possible Use Cases
 
 - A Google Form that opens a new thread on a Google Chat room on submission
-- 
+- Poll your domain for Chat room activity
 
 ## Issues?
 

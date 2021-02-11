@@ -1,0 +1,21 @@
+{
+  "timeZone": "Asia/Kuala_Lumpur",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request"
+  ],
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "Endpoints",
+        "version": "1",
+        "libraryId": "1WovLPVqVjZxkxkgCNgI3S_A3eDsX3DWOAoetZgRGW1JpGQ_9TK25y7mB"
+      }
+    ]
+  },
+  "executionApi": {
+    "access": "ANYONE"
+  }
+}

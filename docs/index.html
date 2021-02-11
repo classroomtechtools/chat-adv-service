@@ -92,23 +92,30 @@
   <section class="readme">
     <article>
       <h1>Chat Advanced Service</h1>
-<p>Currently under development. Thanks for any contributions. Use the issue <a href="https://github.com/classroomtechtools/chat-adv-service/issues">github tracker</a> for issues.</p>
-<ul>
-<li>Library ID: <code>1XDYAGcUoblJ073Kjveni2WOZHpKLYE8qlYMkeHViavLXvsKnBIl1DR2A</code></li>
-<li>Project ID: <code>MQnHmNNee4jlfFGV9v4i6s_D8R0iiSsw_</code></li>
-</ul>
-<p>AppsScript doesn't have a native advanced service to interact with the Chat API.</p>
-<p>This one fills that gap.</p>
-<p>To use:</p>
+<p>Interact with the Google Chat API via AppsScripts.</p>
+<h2>Getting Started</h2>
 <ul>
 <li>Create a service account that has access to Chat API</li>
+<li>Add <code>ChatService</code> to your project with Library ID  <code>1XDYAGcUoblJ073Kjveni2WOZHpKLYE8qlYMkeHViavLXvsKnBIl1DR2A</code></li>
 <li>Send the <code>privateKey</code> and <code>issuerEmail</code> to the <code>ChatService.init</code> method</li>
+<li>The returning object has <code>Spaces</code>, <code>Members</code>, and <code>Messages</code> namespaces, which themselves have methods that match the <a href="https://developers.google.com/hangouts/chat/reference">reference documentation</a>.</li>
 </ul>
 <pre class="prettyprint source lang-js"><code>const Chat = ChatService.init('&lt;privateKey>', '&lt;issuerEmail>');
 const rooms = Chat.Spaces.list();
 Logger.log(rooms);
 </code></pre>
-<p>Please <a href="https://classroomtechtools.github.io/chat-adv-service/">see documentation</a>. The <code>init</code> method creates a <code>Chatv1</code> object, which lets you interact with the API.</p>
+<ul>
+<li>Use the <a href="https://classroomtechtools.github.io/chat-adv-service/">provided documentation</a> for learn how to use all of these methods.</li>
+</ul>
+<h2>Motivation</h2>
+<p>AppsScript doesn't have a native advanced service to interact with the Chat API. And I need one, so I made one!</p>
+<h2>Possible Use Cases</h2>
+<ul>
+<li>A Google Form that opens a new thread on a Google Chat room on submission</li>
+<li>Poll your domain for Chat room activity</li>
+</ul>
+<h2>Issues?</h2>
+<p>Currently used in production, but feedback welcome. Thanks for any contributions. Use the issue <a href="https://github.com/classroomtechtools/chat-adv-service/issues">github tracker</a> for issues.</p>
     </article>
   </section>
 
