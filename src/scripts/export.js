@@ -9,6 +9,7 @@ const response = Chat.Spaces.list();
 Logger.log(response);
  */
 function init(privateKey, issuerEmail) {
+  const {Chatv1} = Import;
   const service = Chatv1.getService(privateKey, issuerEmail);
   return Chatv1.withService(service);
 }

@@ -1,8 +1,8 @@
+import {NSConfigurator} from '@classroomtechtools/nsconfigurator';
+
 const API = Symbol('discovery_api');
 const RESOURCE = Symbol('resource');
-const SERVICE = Symbol('service');
 const MAP = Symbol('map');
-
 
 class APIBase {
   constructor (service) {
@@ -19,7 +19,7 @@ class APIBase {
   [API] (method) {
     const cacheKey = `${this.name}${this.version}${method}`;
     if (this[MAP].has(cacheKey)) return this[MAP].get(cacheKey);
-    const ret = Endpoints.$.createGoogEndpointWithOauth(this.name, this.version, this[RESOURCE], method, this.service);
+    const ret = Endpoints.createGoogEndpointWithOauth(this.name, this.version, this[RESOURCE], method, this.service);
     this[MAP].set(cacheKey, ret);
     return ret;
   }
@@ -46,7 +46,7 @@ class Spaces extends APIBase {
    * @return {Object}
    */
   list (qp={}) {
-    return this[API]('list').createRequest('get', {}, {query:qp}).fetch().json;
+    return this[API]('list').createRequest('get', {}, {query:qp});
   }
 
   /**
@@ -55,7 +55,7 @@ class Spaces extends APIBase {
    * @return {Object}
    */
   get (name) {
-    return this[API]('get').createRequest('get', {name}).fetch().json;
+    return this[API]('get').createRequest('get', {name});
   }
 }
 
@@ -78,7 +78,7 @@ class Members extends APIBase {
    * @return {Object}
    */
   get (name) {
-    return this[API]('get').createRequest('get', {name}).fetch().json;
+    return this[API]('get').createRequest('get', {name});
   }
 
   /**
@@ -90,7 +90,8 @@ class Members extends APIBase {
    * @return {Object}
    */
   list (parent, qp={}) {
-    return this[API]('list').createRequest('get', {parent}).fetch().json;
+    if (!parent.startsWith('spaces/')) throw new TypeError(`Expecting spaces/* but got '${parent}' instead`);
+    return this[API]('list').createRequest('get', {parent});
   }
 }
 
@@ -111,16 +112,16 @@ class Messages extends APIBase {
 const Chat = ChatService('<privateKey>', '<email>');
 const result = Chat.Messages.create('<parentId>', "Content of simple text message in new thread");
    */
-  create (parent, text, body={}) {
+  create (parent, text, body=null) {
     if (!parent) throw new TypeError("Requires parent");
-    if (text !== null) {
+    if (body === null) {
       // we have a simple message with just text
       return this[API]('create').createRequest('post', {parent}, {
-        body: {text}
-      }).fetch().json;
+        payload: {text}
+      });
     }
     // we have something more elaborate
-    return this[API]('create').createRequest('post', {parent}, {body}).fetch().json;
+    return this[API]('create').createRequest('post', {parent}, {payload: body});
   }
 
   /**
@@ -129,7 +130,7 @@ const result = Chat.Messages.create('<parentId>', "Content of simple text messag
    */
   delete (name=null) {
     if (!name) throw new TypeError("Requires name");
-    return this[API]('delete').createRequest('delete', {name}).fetch().json;
+    return this[API]('delete').createRequest('delete', {name});
   }
 
   /**
@@ -139,7 +140,7 @@ const result = Chat.Messages.create('<parentId>', "Content of simple text messag
    */
   get (name=null) {
     if (!name) throw new TypeError("Requires name");
-    return this[API]('get').createRequest('get', {name}).fetch().json;
+    return this[API]('get').createRequest('get', {name});
   }
 
   /**
@@ -153,8 +154,8 @@ const result = Chat.Messages.create('<parentId>', "Content of simple text messag
     if (!name || !updateMask) throw new TypeError("Requires message_name and updateMask");
     return this[API]('update').createRequest('put', {"message.name": name}, {
       query: {updateMask},
-      body
-    }).fetch().json;
+      payload: body
+    });
   }
 }
 
@@ -175,7 +176,7 @@ class Chatv1 {
 
   static getService (privateKey, email) {
     const scopes = ['https://www.googleapis.com/auth/chat.bot'];
-    return Endpoints.$.makeGoogOauthService('MyChatService', email, privateKey, scopes);
+    return Endpoints.makeGoogOauthService('MyChatService', email, privateKey, scopes);
   }
 
   static withService (service) {
@@ -183,14 +184,16 @@ class Chatv1 {
   }
 
   get Spaces () {
-    return new Spaces(this.service);
+    return NSConfigurator(new Spaces(this.service));
   }
 
   get Members () {
-    return new Members(this.service);
+    return NSConfigurator(new Members(this.service));
   }
 
   get Messages () {
-    return new Messages(this.service);
+    return NSConfigurator(new Messages(this.service));
   }
 }
+
+export {Chatv1};

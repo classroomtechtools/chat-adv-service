@@ -1,5 +1,5 @@
 {
-  "name": "chat-adv-service",
+  "name": "@classroomtechtools/chat-adv-service",
   "version": "1.1.0",
   "repository": {
     "type": "git",
@@ -12,16 +12,16 @@
   },
   "author": "Adam Morris <classroomtechtools.ctt@gmail.com> (http://classroomtechtools.com/)",
   "scripts": {
-    "build": "run-s rm-artifacts build generate",
+    "build": "run-s rm-artifacts bundle generate",
     "bundle": "rollup -c",
     "dev": "rollup -c -w",
     "test": "ava",
-    "push": "run-s generate clasp:push",
-    "rm-artifacts": "rm -fr ./project/*",
+    "push": "run-s bundle generate clasp:push",
+    "rm-artifacts": "rm -fr ./build/*",
     "generate": "run-p generate:*",
     "generate:remote": "cp -r ./src/scripts/* ./build/",
     "generate:docs": "jsdoc --configure jsdoc-config.json --verbose --readme README.md",
-    "clasp:create": "clasp create --rootDir ./project",
+    "clasp:create": "clasp create --rootDir ./build",
     "clasp:login": "clasp login",
     "clasp:logout": "clasp logout",
     "clasp:logs": "clasp logs",
@@ -45,8 +45,11 @@
     "appscripts"
   ],
   "description": "Interact with Chat Service with Google AppsScripts",
-  "main": "src/scripts/Chat.js",
+  "main": "src/modules/Chat.js",
   "directories": {
     "test": "tests"
+  },
+  "dependencies": {
+    "@classroomtechtools/nsconfigurator": "^1.0.1"
   }
 }

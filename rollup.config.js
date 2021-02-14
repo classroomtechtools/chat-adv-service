@@ -5,7 +5,7 @@ import multi from '@rollup/plugin-multi-entry';
 const production = !process.env.ROLLUP_WATCH;
 
 export default [{
-	input: ['src/modules/*.js','src/modules/builtins/*.js'],
+	input: ['src/modules/*.js'],
 	treeshake: true,
 	output: {
 		format: 'cjs',

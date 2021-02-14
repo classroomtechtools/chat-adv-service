@@ -107,6 +107,14 @@ Logger.log(rooms);
 <ul>
 <li>Use the <a href="https://classroomtechtools.github.io/chat-adv-service/">provided documentation</a> for learn how to use all of these methods.</li>
 </ul>
+<h2>Usage</h2>
+<p>The methods in this library reach out to the internet, parse it as json, and then return the result from the endpoint. However, you may want more control over those interactions.</p>
+<p>Perhaps you are getting an error and want to see the request that's being built on your behalf, to help troubleshoot. No problem:</p>
+<pre class="prettyprint source lang-js"><code>const Chat = ChatService.init('&lt;privateKey>', '&lt;issuerEmail>');
+const roomRequest = Chat.Spaces.confg({request: true}).list();
+const {url, params} = roomRequest.getParams();
+</code></pre>
+<p>For example, you might want to take advantage of the <code>fields</code> &quot;<a href="https://cloud.google.com/apis/docs/system-parameters">system parameter</a>&quot;. All that does is filter out the keys in the json response, so if you get back a large json with huge content, but you only use <code>name</code> key in the response, <code>?fields=name</code> as a query parameter in the url will tell Google's APIs to filter out everything except <code>name</code>.</p>
 <h2>Motivation</h2>
 <p>AppsScript doesn't have a native advanced service to interact with the Chat API. And I need one, so I made one!</p>
 <h2>Possible Use Cases</h2>

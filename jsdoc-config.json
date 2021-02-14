@@ -1,6 +1,6 @@
 {
     "source": {
-        "include": ["src/scripts/Chat.js", "src/scripts/export.js"]
+        "include": ["src/modules/Chat.js", "src/scripts/export.js"]
     },
     "plugins": ["plugins/markdown"],
     "templates": {

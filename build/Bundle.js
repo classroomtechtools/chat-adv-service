@@ -1,8 +1,13 @@
-const API = Symbol('discovery_api');
-const RESOURCE = Symbol('resource');
-const MAP = Symbol('map');
+/* Bundle as defined from all files in src/modules/*.js */
+const Import = Object.create(null);
 
-const NSConfigurator_ = obj => new Proxy(obj, {
+'use strict';
+
+(function (exports, window) {
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+const NSConfigurator = obj => new Proxy(obj, {
   get: function (target, prop) {
     if (prop === 'conf') {
       // adding conf step, so we need to return proxy to capture call to returned obj
@@ -27,10 +32,14 @@ const NSConfigurator_ = obj => new Proxy(obj, {
     }
     return (...params) => {
       // no conf, call the handler and resolve it with fetch/json step
-      return target[prop].call(target, ...params);
+      return target[prop].call(target, ...params).fetch().json;
     }
   }
 });
+
+const API = Symbol('discovery_api');
+const RESOURCE = Symbol('resource');
+const MAP = Symbol('map');
 
 class APIBase {
   constructor (service) {
@@ -47,7 +56,7 @@ class APIBase {
   [API] (method) {
     const cacheKey = `${this.name}${this.version}${method}`;
     if (this[MAP].has(cacheKey)) return this[MAP].get(cacheKey);
-    const ret = Endpoints.$.createGoogEndpointWithOauth(this.name, this.version, this[RESOURCE], method, this.service);
+    const ret = Endpoints.createGoogEndpointWithOauth(this.name, this.version, this[RESOURCE], method, this.service);
     this[MAP].set(cacheKey, ret);
     return ret;
   }
@@ -204,7 +213,7 @@ class Chatv1 {
 
   static getService (privateKey, email) {
     const scopes = ['https://www.googleapis.com/auth/chat.bot'];
-    return Endpoints.$.makeGoogOauthService('MyChatService', email, privateKey, scopes);
+    return Endpoints.makeGoogOauthService('MyChatService', email, privateKey, scopes);
   }
 
   static withService (service) {
@@ -212,14 +221,19 @@ class Chatv1 {
   }
 
   get Spaces () {
-    return NSConfigurator_(new Spaces(this.service));
+    return NSConfigurator(new Spaces(this.service));
   }
 
   get Members () {
-    return NSConfigurator_(new Members(this.service));
+    return NSConfigurator(new Members(this.service));
   }
 
   get Messages () {
-    return NSConfigurator_(new Messages(this.service));
+    return NSConfigurator(new Messages(this.service));
   }
 }
+
+exports.Chatv1 = Chatv1;
+
+})(Import, this);
+try{exports.Import = Import;}catch(e){}

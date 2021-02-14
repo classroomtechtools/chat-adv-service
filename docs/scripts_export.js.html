@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Global - Documentation
+      scripts/export.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -79,288 +81,37 @@
   <div id="main">
     
       <h1 class="page-title">
-        Global
+        scripts/export.js
       </h1>
     
 
     
+      
 
 <section>
-  <header>
-    
-      <h2>
-        
-        
-        
-      </h2>
-
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-
-        
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-        
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-      <h3 class="subsection-title">Methods</h3>
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#init">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="init">
-      <span class="type-signature"></span>init<span class="signature">(privateKey, issuerEmail)</span><span class="type-signature"> &rarr; {<a href="Chatv1.html">Chatv1</a>}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Create an object that can build requests and parry responses back via the Chatv1 API. It uses Oauth2 library to authenticate, and thus <code>privateKey</code> and <code>issuerEmail</code> is required. Continue interacting with api via the <a href="Chatv1.html">Chatv1</a> object it returns.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>privateKey</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>Private Key as obtained via service account</p>
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>issuerEmail</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>Issuer Email as obtained via service account</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="scripts_export.js.html">scripts/export.js</a>, <a href="scripts_export.js.html#line11">line 11</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="example-container">
-    <a class="link-icon" href="#init-examples">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h5 id="init-examples">Example</h5>
-    
-
-  <pre class="prettyprint"><code>const Chat = ChatService.init('&lt;privatekey>', '&lt;issueremail>');
+    <pre class="prettyprint source linenums"><code>/**
+ * Create an object that can build requests and parry responses back via the Chatv1 API. It uses Oauth2 library to authenticate, and thus `privateKey` and `issuerEmail` is required. Continue interacting with api via the {@link Chatv1 Chatv1} object it returns.
+ * @param {string} privateKey - Private Key as obtained via service account
+ * @param {string} issuerEmail - Issuer Email as obtained via service account
+ * @return {Chatv1}
+ * @example
+const Chat = ChatService.init('&lt;privatekey>', '&lt;issueremail>');
 const response = Chat.Spaces.list();
-Logger.log(response);</code></pre>
+Logger.log(response);
+ */
+function init(privateKey, issuerEmail) {
+  const {Chatv1} = Import;
+  const service = Chatv1.getService(privateKey, issuerEmail);
+  return Chatv1.withService(service);
+}
 
 
-  </div>
-
-
-      
-    
-
-    
-
-    
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>
