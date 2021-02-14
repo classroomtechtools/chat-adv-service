@@ -1,8 +1,36 @@
 const API = Symbol('discovery_api');
 const RESOURCE = Symbol('resource');
-const SERVICE = Symbol('service');
 const MAP = Symbol('map');
 
+const NSConfigurator_ = obj => new Proxy(obj, {
+  get: function (target, prop) {
+    if (prop === 'conf') {
+      // adding conf step, so we need to return proxy to capture call to returned obj
+      return ({fields:extra_fields=null, request:return_request=false, ...kwargs}={}) => {
+        if (Object.keys(kwargs).length > 0) // check params
+          throw new TypeError('conf expecting {fields, request} named parameters');
+        return new Proxy(target, {
+          get: function (innerTarget, innerProp) {
+            return (...params) => {
+              // call the propery on the target, do any handling as necessary in config
+              const req = target[innerProp].call(target, ...params);
+              // add any fields as indicated in conf
+              if (extra_fields) req.addQuery({fields: extra_fields});
+              // if conf indicates to send back the request object, directly, do so
+              if (return_request) return req;
+              // otherwise send back the json
+              return req.fetch().json;
+            }
+          }
+        });
+      }
+    }
+    return (...params) => {
+      // no conf, call the handler and resolve it with fetch/json step
+      return target[prop].call(target, ...params);
+    }
+  }
+});
 
 class APIBase {
   constructor (service) {
@@ -46,7 +74,7 @@ class Spaces extends APIBase {
    * @return {Object}
    */
   list (qp={}) {
-    return this[API]('list').createRequest('get', {}, {query:qp}).fetch().json;
+    return this[API]('list').createRequest('get', {}, {query:qp});
   }
 
   /**
@@ -55,7 +83,7 @@ class Spaces extends APIBase {
    * @return {Object}
    */
   get (name) {
-    return this[API]('get').createRequest('get', {name}).fetch().json;
+    return this[API]('get').createRequest('get', {name});
   }
 }
 
@@ -78,7 +106,7 @@ class Members extends APIBase {
    * @return {Object}
    */
   get (name) {
-    return this[API]('get').createRequest('get', {name}).fetch().json;
+    return this[API]('get').createRequest('get', {name});
   }
 
   /**
@@ -90,7 +118,8 @@ class Members extends APIBase {
    * @return {Object}
    */
   list (parent, qp={}) {
-    return this[API]('list').createRequest('get', {parent}).fetch().json;
+    if (!parent.startsWith('spaces/')) throw new TypeError(`Expecting spaces/* but got '${parent}' instead`);
+    return this[API]('list').createRequest('get', {parent});
   }
 }
 
@@ -111,16 +140,16 @@ class Messages extends APIBase {
 const Chat = ChatService('<privateKey>', '<email>');
 const result = Chat.Messages.create('<parentId>', "Content of simple text message in new thread");
    */
-  create (parent, text, body={}) {
+  create (parent, text, body=null) {
     if (!parent) throw new TypeError("Requires parent");
-    if (text !== null) {
+    if (body === null) {
       // we have a simple message with just text
       return this[API]('create').createRequest('post', {parent}, {
-        body: {text}
-      }).fetch().json;
+        payload: {text}
+      });
     }
     // we have something more elaborate
-    return this[API]('create').createRequest('post', {parent}, {body}).fetch().json;
+    return this[API]('create').createRequest('post', {parent}, {payload: body});
   }
 
   /**
@@ -129,7 +158,7 @@ const result = Chat.Messages.create('<parentId>', "Content of simple text messag
    */
   delete (name=null) {
     if (!name) throw new TypeError("Requires name");
-    return this[API]('delete').createRequest('delete', {name}).fetch().json;
+    return this[API]('delete').createRequest('delete', {name});
   }
 
   /**
@@ -139,7 +168,7 @@ const result = Chat.Messages.create('<parentId>', "Content of simple text messag
    */
   get (name=null) {
     if (!name) throw new TypeError("Requires name");
-    return this[API]('get').createRequest('get', {name}).fetch().json;
+    return this[API]('get').createRequest('get', {name});
   }
 
   /**
@@ -153,8 +182,8 @@ const result = Chat.Messages.create('<parentId>', "Content of simple text messag
     if (!name || !updateMask) throw new TypeError("Requires message_name and updateMask");
     return this[API]('update').createRequest('put', {"message.name": name}, {
       query: {updateMask},
-      body
-    }).fetch().json;
+      payload: body
+    });
   }
 }
 
@@ -183,14 +212,14 @@ class Chatv1 {
   }
 
   get Spaces () {
-    return new Spaces(this.service);
+    return NSConfigurator_(new Spaces(this.service));
   }
 
   get Members () {
-    return new Members(this.service);
+    return NSConfigurator_(new Members(this.service));
   }
 
   get Messages () {
-    return new Messages(this.service);
+    return NSConfigurator_(new Messages(this.service));
   }
 }
